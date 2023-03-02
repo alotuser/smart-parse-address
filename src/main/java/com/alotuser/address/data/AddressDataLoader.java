@@ -12,7 +12,7 @@ public interface AddressDataLoader {
 
 	/**
 	 * 加载地址数据
-	 * @return
+	 * @return Address List
 	 */
     List<Address> loadData();
 

@@ -22,10 +22,17 @@ public class SmartAgent implements Serializable{
 
 	private SmartParse smartParse;
 	
-	private static final AddressDataLoader addressDataLoader=new LocalDataAddressDataLoader();
+	private static volatile AddressDataLoader addressDataLoader=null;
 	
 	public SmartAgent(String userAddressString) {
 		this.userAddressString=userAddressString;
+		if(addressDataLoader == null) {
+            synchronized (SmartAgent.class) {
+                if(addressDataLoader == null) {
+                	addressDataLoader = new LocalDataAddressDataLoader();
+                }
+            }
+        }
 		smartParse = new SmartParse(addressDataLoader);
 	}
 	/**
