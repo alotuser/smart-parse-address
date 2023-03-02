@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import com.alotuser.address.assets.AddressInfo;
 import com.alotuser.address.assets.UserInfo;
+import com.alotuser.address.data.AddressDataLoader;
+import com.alotuser.address.data.LocalDataAddressDataLoader;
 /**
  * SmartAgent
  * @author I6view
@@ -20,9 +22,11 @@ public class SmartAgent implements Serializable{
 
 	private SmartParse smartParse;
 	
+	private static final AddressDataLoader addressDataLoader=new LocalDataAddressDataLoader();
+	
 	public SmartAgent(String userAddressString) {
 		this.userAddressString=userAddressString;
-		smartParse = new SmartParse();
+		smartParse = new SmartParse(addressDataLoader);
 	}
 	/**
 	 * addressInfo
