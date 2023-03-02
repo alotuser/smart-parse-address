@@ -47,10 +47,12 @@ public class SmartParse {
 		return parseUserInfo(text, null);
 	}
 
+	 
 	/**
-	 * 解析用户地址信息
-	 *
+	 *  解析用户地址信息
 	 * @param text 地址信息
+	 * @param level level
+	 * @return 用户地址信息
 	 */
 	public UserInfo parseUserInfo(String text, Integer level) {
 		if (StrUtil.isBlank(text)) {
@@ -111,7 +113,7 @@ public class SmartParse {
 	 * 解析地址
 	 * 
 	 * @param text 地址信息
-	 * @return AddressInfo
+	 * @return 地址信息
 	 */
 	public AddressInfo parseAddressInfo(String text) {
 		return parseAddressInfo(text, null);
@@ -122,7 +124,7 @@ public class SmartParse {
 	 * 
 	 * @param text  地址信息
 	 * @param level 匹配级别。从0开始，可以选择只匹配到第几级，为null则忽略
-	 * @return
+	 * @return      地址信息
 	 */
 	public AddressInfo parseAddressInfo(String text, Integer level) {
 

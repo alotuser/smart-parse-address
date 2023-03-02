@@ -62,7 +62,7 @@ public class SmartMatch {
 	/**
 	 * filterStr
 	 * @param text 地址信息
-	 * @return
+	 * @return filterStr
 	 */
 	public static String filterStr(String text) {
 		text = ReUtil.replaceAll(text, "[`~!@#$^&*=|{}':;',.<>/?~！@#￥……&*——|‘；：”“’。，、？-]", " ");
