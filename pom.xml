@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.alotuser</groupId>
 	<artifactId>smart-parse-address</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.7</version>
 	<name>smart-parse-address</name>
 	<url>https://github.com/alotuser/smart-parse-address</url>
 	<description>可以解析出文本中的收货人姓名、联系方式、邮编和详细地址。并且可以将地址拆分出省市区（自治区、旗、盟等），方便电商和物流等项目应用。</description>
@@ -36,13 +36,17 @@
 
 	<dependencies>
 
-		<!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
 		<dependency>
 		    <groupId>cn.hutool</groupId>
 		    <artifactId>hutool-all</artifactId>
-		    <version>5.8.12</version>
+		    <version>5.8.20</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.alibaba.fastjson2</groupId>
+			<artifactId>fastjson2</artifactId>
+			<version>2.0.37</version>
+		</dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>

@@ -48,7 +48,7 @@ public class AddressInfo {
 	private String address;
 
 	public boolean isEmpty() {
-		return StrUtil.isAllEmpty( provinceCode, cityCode, countyCode, streetCode) || areaId == null;
+		return StrUtil.isAllEmpty(provinceCode, cityCode, countyCode, streetCode) || areaId == null;
 	}
 
 	public String getProvince() {
@@ -129,6 +129,29 @@ public class AddressInfo {
 
 	public void setAreaId(String areaId) {
 		this.areaId = areaId;
+	}
+
+	public void setAddressInfo(AddressInfo addressInfo) {
+		if (null != addressInfo.getAddress())
+			this.setAddress(addressInfo.getAddress());
+		if (null != addressInfo.getAreaId())
+			this.setAreaId(addressInfo.getAreaId());
+		if (null != addressInfo.getCity())
+			this.setCity(addressInfo.getCity());
+		if (null != addressInfo.getCityCode())
+			this.setCityCode(addressInfo.getCityCode());
+		if (null != addressInfo.getCounty())
+			this.setCounty(addressInfo.getCounty());
+		if (null != addressInfo.getCountyCode())
+			this.setCountyCode(addressInfo.getCountyCode());
+		if (null != addressInfo.getProvince())
+			this.setProvince(addressInfo.getProvince());
+		if (null != addressInfo.getProvinceCode())
+			this.setProvinceCode(addressInfo.getProvinceCode());
+		if (null != addressInfo.getStreet())
+			this.setStreet(addressInfo.getStreet());
+		if (null != addressInfo.getStreetCode())
+			this.setStreetCode(addressInfo.getStreetCode());
 	}
 
 }

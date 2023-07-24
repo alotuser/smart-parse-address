@@ -13,6 +13,11 @@ public class UserInfo extends AddressInfo {
      */
     private String mobile;
 
+    
+    public void setAddressInfo(AddressInfo addressInfo) {
+		super.setAddressInfo(addressInfo);
+	}
+    
 	public String getName() {
 		return name;
 	}
@@ -28,6 +33,8 @@ public class UserInfo extends AddressInfo {
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
+
+	
 
 
 

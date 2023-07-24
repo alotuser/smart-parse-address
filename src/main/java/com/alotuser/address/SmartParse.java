@@ -9,8 +9,6 @@ import com.alotuser.address.assets.UserInfo;
 import com.alotuser.address.data.AddressDataLoader;
 import com.alotuser.address.data.LocalDataAddressDataLoader;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.text.StrSplitter;
@@ -103,7 +101,8 @@ public class SmartParse {
 				userInfo.setName(name);
 			if(addressInfo.isEmpty())
 				addressInfo.setAddress(null);
-			BeanUtil.copyProperties(addressInfo, userInfo, CopyOptions.create().ignoreNullValue());
+			
+			userInfo.setAddressInfo(addressInfo);
 		}
 
 		return userInfo;
@@ -139,7 +138,7 @@ public class SmartParse {
 		for (String str : split) {
 			AddressInfo info = smartMatch.matchAddress(addressList, str, level);
 			if (info != null && !info.isEmpty()) {
-				BeanUtil.copyProperties(info, addressInfo, CopyOptions.create().ignoreNullValue());
+				addressInfo.setAddressInfo(info);
 			}
 		}
 		return addressInfo;
