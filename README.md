@@ -8,7 +8,7 @@
 <dependency>
     <groupId>com.github.alotuser</groupId>
     <artifactId>smart-parse-address</artifactId>
-    <version>1.0.7</version>
+    <version>1.7.7</version>
 </dependency>
 ```
 ### demo代码演示
