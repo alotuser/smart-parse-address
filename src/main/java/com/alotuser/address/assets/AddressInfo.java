@@ -1,6 +1,6 @@
 package com.alotuser.address.assets;
 
-import cn.hutool.core.util.StrUtil;
+import cn.alotus.core.util.StrUtil;
 
 /**
  * 地址信息

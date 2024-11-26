@@ -10,10 +10,10 @@ import com.alotuser.address.assets.Address;
 import com.alotuser.address.assets.AddressInfo;
 import com.alotuser.address.assets.MatchAddress;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.lang.RegexPool;
-import cn.hutool.core.util.ReUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.alotus.core.collection.CollUtil;
+import cn.alotus.core.lang.RegexPool;
+import cn.alotus.core.util.ReUtil;
+import cn.alotus.core.util.StrUtil;
 /**
  * 匹配地址类
  * @author I6view

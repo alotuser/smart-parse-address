@@ -9,11 +9,11 @@ import com.alotuser.address.assets.UserInfo;
 import com.alotuser.address.data.AddressDataLoader;
 import com.alotuser.address.data.LocalDataAddressDataLoader;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.text.StrSplitter;
-import cn.hutool.core.util.CharUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.alotus.core.collection.CollUtil;
+import cn.alotus.core.collection.ListUtil;
+import cn.alotus.core.text.StrSplitter;
+import cn.alotus.core.util.CharUtil;
+import cn.alotus.core.util.StrUtil;
 
 public class SmartParse {
 
