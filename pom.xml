@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.alotuser</groupId>
 	<artifactId>smart-parse-address</artifactId>
-	<version>1.7.7</version>
+	<version>1.7.8</version>
 	<name>smart-parse-address</name>
 	<url>https://github.com/alotuser/smart-parse-address</url>
 	<description>可以解析出文本中的收货人姓名、联系方式、邮编和详细地址。并且可以将地址拆分出省市区（自治区、旗、盟等），方便电商和物流等项目应用。</description>
