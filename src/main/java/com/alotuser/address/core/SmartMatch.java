@@ -1,4 +1,4 @@
-package com.alotuser.address;
+package com.alotuser.address.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,23 +14,29 @@ import cn.alotus.core.collection.CollUtil;
 import cn.alotus.core.lang.RegexPool;
 import cn.alotus.core.util.ReUtil;
 import cn.alotus.core.util.StrUtil;
+
 /**
  * 匹配地址类
+ * 
  * @author I6view
  *
  */
 public class SmartMatch {
 
-	
-	/**
-	 * 前缀字符特殊处理，匹配时候会自动处理掉符合正则的文字
-	 */
-	private Pattern pattern = Pattern.compile("^[省市区县州街道镇乡特别行政自治]+");
+	/** 默认省市区前缀清理正则 */
+	private static final Pattern DEFAULT_PREFIX_PATTERN = Pattern.compile("^[省市区县州街道镇乡特别行政自治]+");
+	/** filterStr 特殊符号过滤正则 */
+	private static final Pattern FILTER_CHAR_PATTERN = Pattern.compile("[`~!@#$^&*=|{}':;',.<>/?~！@#￥……&*——|‘；：”“’。，、？-]");
+	/** 地址文本净化：仅保留中文/字母/数字/横线 */
+	private static final Pattern CLEAN_TEXT_PATTERN = Pattern.compile("[^\u4e00-\u9fa5A-Za-z0-9-]");
+ 
+	private Pattern customPrefixPattern;
 
+	
 	/**
 	 * 匹配手机号码
 	 *
-	 * @param  text    地址信息
+	 * @param text 地址信息
 	 * @return String
 	 */
 	public static String matchMobile(String text) {
@@ -61,15 +67,17 @@ public class SmartMatch {
 
 	/**
 	 * filterStr
+	 * 
 	 * @param text 地址信息
 	 * @return filterStr
 	 */
 	public static String filterStr(String text) {
-		text = ReUtil.replaceAll(text, "[`~!@#$^&*=|{}':;',.<>/?~！@#￥……&*——|‘；：”“’。，、？-]", " ");
-		return text.replace("\r", "").replace("\n", "");
+
+		text = ReUtil.replaceAll(text, FILTER_CHAR_PATTERN, StrUtil.SPACE);
+
+		return StrUtil.removeAllLineBreaks(text);
 	}
-	
-	
+
 	/**
 	 * 匹配地址
 	 *
@@ -82,15 +90,18 @@ public class SmartMatch {
 		if (StrUtil.isBlank(text)) {
 			return null;
 		}
+		List<MatchAddress> matchList=new ArrayList<MatchAddress>(64);
 		AddressInfo info = new AddressInfo();
 		// 清除特殊字符
-		text = ReUtil.replaceAll(text, "[^\u4e00-\u9fa5A-Za-z0-9-]", "");
+		text = ReUtil.replaceAll(text, CLEAN_TEXT_PATTERN, StrUtil.EMPTY);
 
-		String address = text;
+		final String originalText = text;
+		final int textLen = text.length();
+		final Pattern useCutPattern = customPrefixPattern != null ? customPrefixPattern : DEFAULT_PREFIX_PATTERN;
 
-		String matchAddressStr = "";
-		List<MatchAddress> matchProvince = new ArrayList<>();
-		for (int endIndex = 0; endIndex < text.length(); endIndex++) {
+		String matchAddressStr = StrUtil.EMPTY;
+		List<MatchAddress> matchProvince = getMatchList(matchList);
+		for (int endIndex = 0; endIndex < textLen; endIndex++) {
 			matchAddressStr = StrUtil.subWithLength(text, 0, endIndex + 2);
 			for (Address province : addressList) {
 				if (province.getName().contains(matchAddressStr)) {
@@ -102,17 +113,17 @@ public class SmartMatch {
 		if (!matchProvince.isEmpty()) {
 			MatchAddress matchAddress = getBestMatch(matchProvince);
 			setMatchAddressInfo(info, matchAddress);
-			text = text.replaceFirst(matchAddress.getMatchValue(), "");
-			text = ReUtil.replaceFirst(pattern, text, "");
+			text = text.replaceFirst(matchAddress.getMatchValue(), StrUtil.EMPTY);
+			text = ReUtil.replaceFirst(useCutPattern, text, StrUtil.EMPTY);
 		}
 		if (level != null && level == 0) {
-			setAddress(matchProvince, address, text, info);
+			setAddress(matchProvince, originalText, text, info);
 			return info;
 		}
 
 		// 市查找
-		List<MatchAddress> matchCity = new ArrayList<>(); // 粗略匹配上的市
-		for (int endIndex = 0; endIndex < text.length(); endIndex++) {
+		List<MatchAddress> matchCity = getMatchList(matchList); // 粗略匹配上的市
+		for (int endIndex = 0; endIndex < textLen; endIndex++) {
 			matchAddressStr = StrUtil.subWithLength(text, 0, endIndex + 2);
 			for (Address province : addressList) {
 				if (province.getChildren() == null) {
@@ -130,19 +141,19 @@ public class SmartMatch {
 		if (!matchCity.isEmpty()) {
 			MatchAddress matchAddress = getBestMatch(matchCity);
 			setMatchAddressInfo(info, matchAddress);
-			text = text.replaceFirst(matchAddress.getMatchValue(), "");
+			text = text.replaceFirst(matchAddress.getMatchValue(), StrUtil.EMPTY);
 			// 如果是市开头的，去掉
-			text = ReUtil.replaceFirst(pattern, text, "");
+			text = ReUtil.replaceFirst(useCutPattern, text, StrUtil.EMPTY);
 		}
 
 		if (level != null && level == 1) {
-			setAddress(matchProvince, address, text, info);
+			setAddress(matchProvince, originalText, text, info);
 			return info;
 		}
 
 		// 区县查找
-		List<MatchAddress> matchCounty = new ArrayList<>(); // 粗略匹配上的区县
-		for (int endIndex = 0; endIndex < text.length(); endIndex++) {
+		List<MatchAddress> matchCounty = getMatchList(matchList); // 粗略匹配上的区县
+		for (int endIndex = 0; endIndex < textLen; endIndex++) {
 			matchAddressStr = StrUtil.subWithLength(text, 0, endIndex + 2);
 
 			for (Address province : addressList) {
@@ -170,18 +181,18 @@ public class SmartMatch {
 		if (!matchCounty.isEmpty()) {
 			MatchAddress matchAddress = getBestMatch(matchCounty);
 			setMatchAddressInfo(info, matchAddress);
-			text = text.replaceFirst(matchAddress.getMatchValue(), "");
-			text = ReUtil.replaceFirst(pattern, text, "");
+			text = text.replaceFirst(matchAddress.getMatchValue(), StrUtil.EMPTY);
+			text = ReUtil.replaceFirst(useCutPattern, text, StrUtil.EMPTY);
 		}
 
 		if (level != null && level == 2) {
-			setAddress(matchProvince, address, text, info);
+			setAddress(matchProvince, originalText, text, info);
 			return info;
 		}
 
 		// 街道查找
-		List<MatchAddress> matchStreet = new ArrayList<>(); // 粗略匹配上的街道查
-		for (int endIndex = 0; endIndex < text.length(); endIndex++) {
+		List<MatchAddress> matchStreet = getMatchList(matchList); // 粗略匹配上的街道查
+		for (int endIndex = 0; endIndex < textLen; endIndex++) {
 			matchAddressStr = StrUtil.subWithLength(text, 0, endIndex + 2);
 
 			for (Address province : addressList) {
@@ -217,34 +228,45 @@ public class SmartMatch {
 		if (!matchStreet.isEmpty()) {
 			MatchAddress matchAddress = getBestMatch(matchStreet);
 			setMatchAddressInfo(info, matchAddress);
-			text = text.replaceFirst(matchAddress.getMatchValue(), "");
-			text = ReUtil.replaceFirst(pattern, text, "");
+			text = text.replaceFirst(matchAddress.getMatchValue(), StrUtil.EMPTY);
+			text = ReUtil.replaceFirst(useCutPattern, text, StrUtil.EMPTY);
 		}
-		setAddress(matchStreet, address, text, info);
+		setAddress(matchStreet, originalText, text, info);
 		return info;
 	}
+
+	private List<MatchAddress> getMatchList(List<MatchAddress> matchList) {
+		matchList.clear();
+		return matchList;
+	}
+
 	/**
 	 * set Address
+	 * 
 	 * @param matchList matchList
-	 * @param address address
-	 * @param text text
-	 * @param info AddressInfo
+	 * @param address   address
+	 * @param text      text
+	 * @param info      AddressInfo
 	 */
 	private void setAddress(List<MatchAddress> matchList, String address, String text, AddressInfo info) {
 		if (matchList.isEmpty() || !address.equals(text)) {
 			info.setAddress(text);
 		}
 	}
+
 	/**
 	 * 获取最优匹配
+	 * 
 	 * @param matchAddressList matchAddressList
 	 * @return
 	 */
 	private MatchAddress getBestMatch(List<MatchAddress> matchAddressList) {
 		return Collections.max(matchAddressList, Comparator.comparingInt(o -> o.getMatchValue().length()));
 	}
+
 	/**
 	 * set Match Info
+	 * 
 	 * @param info
 	 * @param matchAddress
 	 */
@@ -260,12 +282,13 @@ public class SmartMatch {
 		info.setAreaId(matchAddress.getAreaId());
 	}
 
+	
 
 	public Pattern getPattern() {
-		return pattern;
+		return customPrefixPattern;
 	}
 
 	public void setPattern(Pattern pattern) {
-		this.pattern = pattern;
+		this.customPrefixPattern = pattern;
 	}
 }

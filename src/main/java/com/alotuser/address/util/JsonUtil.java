@@ -53,6 +53,7 @@ public class JsonUtil {
 
 		final JSONReader.Context context = JSONFactory.createReadContext();
 		try (JSONReader reader = JSONReader.of(in, StandardCharsets.UTF_8, context)) {
+			
 			if (reader.nextIfNull()) {
 				return null;
 			}
