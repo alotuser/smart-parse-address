@@ -37,5 +37,5 @@ String textC1 = "上海市黄浦区南苏州路333号中国东方航空公司";
 UserInfo userInfoC1 = SmartAgent.parseUserAddressString(textC1).getUserInfo();
 System.out.println(JSONUtil.toJsonStr(userInfoC1));
 ```
-### demo代码演示
-	地区树形同步工具： https://github.com/alotuser/generate-area-data
+### 地区树形同步工具
+	https://github.com/alotuser/generate-area-data
