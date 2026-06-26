@@ -8,7 +8,11 @@ import java.util.List;
  * @author I6view
  *
  */
-public class Address {
+public class Address implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * id
 	 */
