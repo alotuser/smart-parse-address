@@ -1,6 +1,7 @@
 package com.alotuser.address;
 
 import com.alotuser.address.assets.UserInfo;
+import com.alotuser.address.data.UrlAddressDataLoader;
 import com.alotuser.address.util.JsonUtil;
 
 import cn.alotus.core.date.TimeInterval;
@@ -10,11 +11,12 @@ import cn.alotus.core.lang.Console;
 class SmartParseTest {
 
 	public static void main(String[] args) {
-		
-		
-		//String url="http://127.1.1.1:8080/areaData.json";
-		
-		
+
+		// 本地指定文件：相对路径、Windows 绝对路径都支持（内部转成 file: URL，空格和中文会自动编码）
+		// 远程数据源直接写 http/https 地址；不设置则默认读 classpath 下的 areaData.json
+		String url = "file:D:\\tg\\areaData.json";
+		SmartAgent.setGlobalAddressDataLoader(new UrlAddressDataLoader(url));
+
 		final TimeInterval timer = new TimeInterval();
  
 		timer.start("A1");
@@ -52,9 +54,6 @@ class SmartParseTest {
 		UserInfo userInfoC1 = SmartAgent.parseUserAddressString(textC1).getUserInfo();
 		System.out.println(JsonUtil.toJsonStr(userInfoC1));
 		Console.log("Timer C1 took {} ms", timer.intervalMs("C1"));
-		
-
-
 	}
 
 }
