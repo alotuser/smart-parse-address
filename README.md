@@ -1,18 +1,25 @@
 # smart-parse-address
 ## 智能解析收货地址
 
-### 应用背景：
-	可以解析出文本中的收货人姓名、联系方式、邮编和详细地址。并且可以将地址拆分出省市区（自治区、旗、盟等），方便电商和物流等项目应用。
-### Maven项目的pom.xml的dependencies中加入以下内容:
-``` xml
+### 应用背景
+
+可以解析出文本中的收货人姓名、联系方式、邮编和详细地址。并且可以将地址拆分出省市区（自治区、旗、盟等），方便电商和物流等项目应用。
+
+### Maven 依赖
+
+在项目的 pom.xml 的 dependencies 中加入以下内容：
+
+```xml
 <dependency>
     <groupId>com.github.alotuser</groupId>
     <artifactId>smart-parse-address</artifactId>
     <version>1.8.1</version>
 </dependency>
 ```
-### demo代码演示
-``` java
+
+### demo 代码演示
+
+```java
 String textA1 = "收货人: 李丽 手机号码: 13166666666 所在地区: 上海市黄浦区 详细地址: 南苏州路333号中国东方航空公司\n";
 UserInfo userInfoA1 = SmartAgent.parseUserAddressString(textA1).getUserInfo();
 System.out.println(JSONUtil.toJsonStr(userInfoA1));
@@ -37,9 +44,12 @@ String textC1 = "上海市黄浦区南苏州路333号中国东方航空公司";
 UserInfo userInfoC1 = SmartAgent.parseUserAddressString(textC1).getUserInfo();
 System.out.println(JSONUtil.toJsonStr(userInfoC1));
 ```
+
 ### 地址数据源切换
-	默认读取 classpath 下的 resources/areaData.json，无需任何配置。数据放在本地其他文件或远程服务上时，解析前先调用 SmartAgent.setGlobalAddressDataLoader(AddressDataLoader) 全局指定数据源，之后所有 new SmartAgent(...) / SmartAgent.parseUserAddressString(...) 都复用该加载器，数据只在首次加载一次。
-``` java
+
+默认读取 classpath 下的 resources/areaData.json，无需任何配置。数据放在本地其他文件或远程服务上时，解析前先调用 `SmartAgent.setGlobalAddressDataLoader(AddressDataLoader)` 全局指定数据源，之后所有 `new SmartAgent(...)` / `SmartAgent.parseUserAddressString(...)` 都复用该加载器，数据只在首次加载一次。
+
+```java
 // 本地指定文件：写 file: URL，Windows 绝对路径、相对路径都可用（反斜杠在 Java 字符串里要转义成 \\）
 // 远程数据源直接写 http/https 地址；不设置则默认读 classpath 下的 areaData.json
 String url = "file:D:\\tg\\areaData.json";
@@ -60,10 +70,17 @@ SmartAgent.setGlobalAddressDataLoader(new AddressDataLoader() {
     }
 });
 ```
-	几点约定：一是设置只影响之后创建的 SmartAgent，需在解析前调用；二是入参为 null 会抛 IllegalArgumentException("AddressDataLoader 不能为null")；三是数据文件内容更新后，需先 SmartAgent.clearAllAddressCache() 再重新 setGlobalAddressDataLoader(...)，否则拿到的还是缓存里的旧数据；四是可随时用 SmartAgent.getGlobalAddressDataLoader() 查看当前生效的加载器。
+
+几点约定：
+
+1. 设置只影响之后创建的 SmartAgent，需在解析前调用；
+2. 入参为 null 会抛 `IllegalArgumentException("AddressDataLoader 不能为null")`；
+3. 数据文件内容更新后，需先 `SmartAgent.clearAllAddressCache()` 再重新 `setGlobalAddressDataLoader(...)`，否则拿到的还是缓存里的旧数据；
+4. 可随时用 `SmartAgent.getGlobalAddressDataLoader()` 查看当前生效的加载器。
 
 #### 全局与单次（实例级）两种用法
-	全局方式适合整个应用共用一份地址库；如果不同业务要用不同数据源，也可以在创建实例时单独指定，只影响当前这一个实例。
+
+全局方式适合整个应用共用一份地址库；如果不同业务要用不同数据源，也可以在创建实例时单独指定，只影响当前这一个实例。
 
 | 用法 | 数据源 | 生效范围 |
 | --- | --- | --- |
@@ -74,7 +91,7 @@ SmartAgent.setGlobalAddressDataLoader(new AddressDataLoader() {
 | new SmartAgent(text, String urlStr) | 同上，内部按 URL 解析（纯路径需先转 URL） | 当前实例 |
 | SmartAgent.parseUserAddressString(text, loader / dataUrl / urlStr) | 同上三种，静态工厂形式 | 当前实例 |
 
-``` java
+```java
 String text = "收货人: 李丽 手机号码: 13166666666 所在地区: 上海市黄浦区 详细地址: 南苏州路333号中国东方航空公司";
 
 // 1. 构造器 + URL 对象
@@ -92,7 +109,9 @@ UserInfo u4 = SmartAgent.parseUserAddressString(text, new URL("file:/D:/tg/areaD
 UserInfo u5 = SmartAgent.parseUserAddressString(text, "file:/D:/tg/areaData.json").getUserInfo();
 UserInfo u6 = SmartAgent.parseUserAddressString(text, new UrlAddressDataLoader("file:/D:/tg/areaData.json")).getUserInfo();
 ```
-	实例级指定 URL 时也会走全局 URL 缓存：同一个 URL 无论创建多少个 SmartAgent，数据只加载一次（缓存按 URL 字符串共享）。实例级指定的数据源不影响 SmartAgent.getGlobalAddressDataLoader()，两者可以同时使用。
+
+实例级指定 URL 时也会走全局 URL 缓存：同一个 URL 无论创建多少个 SmartAgent，数据只加载一次（缓存按 URL 字符串共享）。实例级指定的数据源不影响 `SmartAgent.getGlobalAddressDataLoader()`，两者可以同时使用。
 
 ### 地区树形同步工具
-	https://github.com/alotuser/generate-area-data
+
+https://github.com/alotuser/generate-area-data
